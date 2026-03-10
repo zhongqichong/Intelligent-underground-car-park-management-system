@@ -2,6 +2,8 @@
 
 Graduation project implementation with Spring Boot + Vue for a 1000-spot, single-floor garage.
 
+Frontend is refactored as a front-end/back-end separated SPA using Vue + Element UI style component library (Element Plus for Vue 3).
+
 ## Delivered in this stage
 - JWT authentication + RBAC (ADMIN / OWNER)
 - Admin account/password management with request validation
@@ -60,10 +62,14 @@ Swagger:
    - `GET /api/admin/alerts?unresolvedOnly=true|false`
    - `POST /api/admin/alerts/{alertId}/resolve`
 
-## Frontend
-`frontend/src/main.js` provides:
-- Owner map demo (recommended spot + simulated entry)
-- Admin dashboard cards and recent 7-day revenue table
+## Frontend (Vue + Element UI style)
+The frontend is now split into layered modules:
+- `src/App.vue`: overall layout (header + side navigation)
+- `src/router/index.js`: route management (`/owner`, `/admin`)
+- `src/views/OwnerView.vue`: owner map and entry flow
+- `src/views/AdminView.vue`: admin dashboard
+- `src/api/http.js`: API request wrapper for unified response envelope
+- `src/styles/app.css`: global and map styles
 
 ## Thesis material
 - `docs/thesis_ppt_outline.md` provides a defense PPT outline template.
