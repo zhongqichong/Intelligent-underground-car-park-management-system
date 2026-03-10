@@ -1,0 +1,60 @@
+html, body, #app {
+  height: 100%;
+  margin: 0;
+}
+
+.layout {
+  min-height: 100%;
+}
+
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ebeef5;
+  background: #fff;
+}
+
+.brand {
+  font-weight: 700;
+  color: #303133;
+}
+
+.side-menu {
+  border-right: 1px solid #ebeef5;
+  background: #fff;
+}
+
+.card-header {
+  font-weight: 700;
+  color: #303133;
+}
+
+.grid {
+  margin-top: 12px;
+  display: grid;
+  gap: 1px;
+  background: #ddd;
+  padding: 8px;
+  width: fit-content;
+}
+
+.cell {
+  width: 16px;
+  height: 16px;
+}
+
+.road { background: #f7f7f7; }
+.route-path { background: #8e44ad; }
+.spot-free { background: #67c23a; }
+.spot-occupied { background: #f56c6c; }
+.spot-recommended { background: #e6a23c; }
+.element-pillar { background: #606266; }
+.element-elevator { background: #409eff; }
+.element-entrance { background: #909399; }
+.element-boundary { background: #303133; }
+.element-no_parking { background: #c0c4cc; }
+
+.metric-card { margin-bottom: 12px; }
+.metric-label { font-size: 13px; color: #909399; }
+.metric-value { font-size: 22px; font-weight: 700; margin-top: 4px; }
