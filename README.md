@@ -2,7 +2,9 @@
 
 Graduation project implementation with Spring Boot + Vue for a 1000-spot, single-floor garage.
 
-Frontend is refactored as a front-end/back-end separated SPA using Vue + Element UI style component library (Element Plus for Vue 3).
+Frontend and backend are **fully separated**:
+- `backend/`: Spring Boot REST API service (port `8080`)
+- `frontend/`: Vue 3 + Element Plus SPA (Vite dev server, port `5173`)
 
 ## Delivered in this stage
 - JWT authentication + RBAC (ADMIN / OWNER)
@@ -25,7 +27,7 @@ Frontend is refactored as a front-end/back-end separated SPA using Vue + Element
 - Swagger API docs
 - MySQL schema script
 
-## Run backend
+## Backend setup (independent deployment)
 ```bash
 cd backend
 mvn spring-boot:run
@@ -34,12 +36,27 @@ mvn spring-boot:run
 Env vars:
 - `STRIPE_SECRET_KEY`: required for `/api/driver/payment/{sessionId}`.
 
+Config notes:
+- DB connection in `backend/src/main/resources/application.yml`
+- CORS origins in `app.cors.allowed-origins` (default allows local Vite)
+
 Default admin account:
 - username: `admin`
 - password: `Admin@123`
 
 Swagger:
 - http://localhost:8080/swagger-ui.html
+
+## Frontend setup (independent deployment)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend API access:
+- Default uses Vite proxy: `/api -> http://localhost:8080`.
+- Optional: set `VITE_API_BASE_URL` to absolute backend address (see `frontend/.env.example`).
 
 ## API quick flow
 > Most endpoints now return `{ success, message, data }`.
