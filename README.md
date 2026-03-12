@@ -10,10 +10,10 @@ Frontend and backend are **fully separated**:
 - JWT authentication + RBAC (ADMIN / OWNER)
 - Admin account/password management with request validation
 - Security hardening for admin responses (no password hash leakage)
-- Parking spot management (2D grid coordinates and pillar/elevator flags)
+- Parking spot management (2D grid coordinates, rectangular spot rendering, grouped blocks and 2-spot-wide black road aisles)
 - Garage map element management (boundary, pillar, no-parking zone, entrances, elevator)
-- Smart recommendation based on elevator distance + congestion + pillar penalty
-- Route guidance path output from entrance to recommended spot
+- Smart recommendation based on elevator distance + congestion + pillar penalty (map enlarged)
+- A* route guidance path output from single entrance to recommended spot
 - Simulated traffic tick for demo (zone load + occupancy changes)
 - Tiered billing
 - Real payment gateway integration via Stripe PaymentIntent
@@ -70,8 +70,9 @@ Frontend API access:
 4. `POST /api/driver/payment/{sessionId}` to create real payment intent
 5. `POST /api/driver/payment/webhook` to update payment status by payment intent id
 6. Admin uses `/api/admin/*` endpoints for spots/accounts/logs/alerts
+   - Spot CRUD + status update: `GET/POST /api/admin/spots`, `PATCH /api/admin/spots/{spotId}/status`, `DELETE /api/admin/spots/{spotId}`
 7. Admin can manage map geometry and simulation:
-   - `GET/POST /api/admin/map-elements`
+   - Map element CRUD: `GET/POST /api/admin/map-elements`, `DELETE /api/admin/map-elements/{elementId}`
    - `POST /api/admin/simulate/tick`
 8. Admin dashboard report:
    - `GET /api/admin/reports/overview`
@@ -80,12 +81,12 @@ Frontend API access:
    - `POST /api/admin/alerts/{alertId}/resolve`
 
 ## Frontend (Vue + Element UI style)
-The frontend is now split into layered modules and polished with Element Plus:
+The frontend is now split into layered modules and polished with Element Plus (frontend now falls back to demo grouped spots if backend is temporarily unreachable):
 - `src/views/LoginView.vue`: login + owner registration
 - `src/App.vue`: overall layout shell (sidebar, breadcrumb, user info)
 - `src/router/index.js`: route guards for auth/admin-only access
-- `src/views/OwnerView.vue`: owner map, recommendation, entry/exit actions
-- `src/views/AdminView.vue`: admin center (report/spot/map element/alert/log tabs)
+- `src/views/OwnerView.vue`: enlarged owner map with rectangular grouped parking spots and 2-spot-wide black road aisles, recommendation, entry/exit actions, red A* route
+- `src/views/AdminView.vue`: admin center with planar map operations (spot CRUD/status + boundary/obstacle CRUD)
 - `src/composables/useSession.js`: token persistence + JWT role parsing
 - `src/api/http.js`: request wrapper with unified envelope + error interception
 - `src/styles/app.css`: full theme styling for a cleaner management UI

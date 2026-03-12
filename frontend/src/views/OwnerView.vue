@@ -10,7 +10,7 @@
           <el-tag type="danger">占用车位</el-tag>
           <el-tag type="warning">推荐车位</el-tag>
           <el-tag type="info">障碍/边界</el-tag>
-          <el-tag color="#8e44ad" effect="dark">引导路径</el-tag>
+          <el-tag color="#d93025" effect="dark">A*引导路径</el-tag>
         </div>
         <div class="grid-wrapper">
           <div class="grid" :style="gridStyle">
@@ -54,7 +54,7 @@
         </el-descriptions>
       </el-card>
 
-      <el-alert v-if="message" :title="message" type="success" :closable="false" show-icon />
+      <el-alert v-if="message" :title="message" type="warning" :closable="false" show-icon />
     </el-col>
   </el-row>
 </template>
@@ -69,11 +69,11 @@ const plate = ref('TEST-001')
 const loading = ref(false)
 const message = ref('')
 const exitInfo = ref(null)
-const map = ref({ width: 40, height: 25, spots: [], elements: [], recommendation: null, routePath: [] })
+const map = ref({ width: 60, height: 35, spots: [], elements: [], recommendation: null, routePath: [] })
 
 const gridStyle = computed(() => ({
-  gridTemplateColumns: `repeat(${map.value.width}, 16px)`,
-  gridTemplateRows: `repeat(${map.value.height}, 16px)`
+  gridTemplateColumns: `repeat(${map.value.width}, 26px)`,
+  gridTemplateRows: `repeat(${map.value.height}, 26px)`
 }))
 
 function inRect(x, y, element) {
@@ -96,10 +96,51 @@ function cellType(x, y) {
   return `element-${String(element.type).toLowerCase()}`
 }
 
+function demoMap() {
+  const spots = []
+  let idx = 1
+  const rowGroupStarts = [3, 11, 19]
+  const colGroupStarts = [4, 16, 28, 40]
+  for (const rg of rowGroupStarts) {
+    for (const ro of [0, 2]) {
+      const y = rg + ro
+      for (const cg of colGroupStarts) {
+        for (let i = 0; i < 5; i++) {
+          const x = cg + i * 2
+          spots.push({ code: `A${idx}`, x, y, occupied: idx % 7 === 0 })
+          idx++
+        }
+      }
+    }
+  }
+
+  const elements = [
+    { type: 'BOUNDARY', x: 0, y: 0, width: 60, height: 1 },
+    { type: 'BOUNDARY', x: 0, y: 34, width: 60, height: 1 },
+    { type: 'BOUNDARY', x: 0, y: 0, width: 1, height: 35 },
+    { type: 'BOUNDARY', x: 59, y: 0, width: 1, height: 35 },
+    { type: 'ENTRANCE', x: 1, y: 17, width: 2, height: 2 },
+    { type: 'ELEVATOR', x: 30, y: 2, width: 2, height: 2 }
+  ]
+
+  return {
+    width: 60,
+    height: 35,
+    spots,
+    elements,
+    recommendation: { spotCode: 'A1', score: 1 },
+    routePath: [{ x: 1, y: 17 }, { x: 2, y: 17 }, { x: 3, y: 17 }, { x: 4, y: 17 }, { x: 4, y: 5 }, { x: 4, y: 3 }]
+  }
+}
+
 async function loadMap() {
   loading.value = true
   try {
     map.value = await request({ method: 'get', url: '/api/driver/map-overview', token: state.token })
+    message.value = ''
+  } catch (_) {
+    map.value = demoMap()
+    message.value = '后端未连接，已显示演示车位布局（不是空地图）'
   } finally {
     loading.value = false
   }

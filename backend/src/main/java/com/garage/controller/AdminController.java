@@ -5,7 +5,6 @@ import com.garage.entity.MapElement;
 import com.garage.entity.OperationLog;
 import com.garage.entity.ParkingSpot;
 import com.garage.repository.OperationLogRepository;
-import com.garage.repository.ParkingSpotRepository;
 import com.garage.service.AdminService;
 import com.garage.service.ReportService;
 import com.garage.service.SimulationService;
@@ -23,7 +22,6 @@ import java.util.Map;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final AdminService adminService;
-    private final ParkingSpotRepository spotRepository;
     private final OperationLogRepository operationLogRepository;
     private final SimulationService simulationService;
     private final ReportService reportService;
@@ -41,12 +39,23 @@ public class AdminController {
 
     @GetMapping("/spots")
     public ApiResponse<List<ParkingSpot>> spots() {
-        return ApiResponse.ok(spotRepository.findAll());
+        return ApiResponse.ok(adminService.listSpots());
     }
 
     @PostMapping("/spots")
     public ApiResponse<ParkingSpot> upsertSpot(@RequestBody ParkingSpot spot) {
         return ApiResponse.ok("Spot saved", adminService.upsertSpot(spot));
+    }
+
+    @PatchMapping("/spots/{spotId}/status")
+    public ApiResponse<ParkingSpot> updateSpotStatus(@PathVariable Long spotId, @RequestParam boolean occupied) {
+        return ApiResponse.ok("Spot status updated", adminService.updateSpotStatus(spotId, occupied));
+    }
+
+    @DeleteMapping("/spots/{spotId}")
+    public ApiResponse<Void> deleteSpot(@PathVariable Long spotId) {
+        adminService.deleteSpot(spotId);
+        return ApiResponse.ok("Spot deleted", null);
     }
 
     @GetMapping("/map-elements")
@@ -57,6 +66,12 @@ public class AdminController {
     @PostMapping("/map-elements")
     public ApiResponse<MapElement> upsertMapElement(@RequestBody MapElement element) {
         return ApiResponse.ok("Map element saved", adminService.upsertMapElement(element));
+    }
+
+    @DeleteMapping("/map-elements/{elementId}")
+    public ApiResponse<Void> deleteMapElement(@PathVariable Long elementId) {
+        adminService.deleteMapElement(elementId);
+        return ApiResponse.ok("Map element deleted", null);
     }
 
     @PostMapping("/simulate/tick")

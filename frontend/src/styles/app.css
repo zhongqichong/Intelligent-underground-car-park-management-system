@@ -113,15 +113,38 @@ html, body, #app {
 }
 
 .cell {
-  width: 16px;
-  height: 16px;
+  width: 26px;
+  height: 26px;
 }
 
-.road { background: #f9fafc; }
-.route-path { background: #8e44ad; }
-.spot-free { background: #67c23a; }
-.spot-occupied { background: #f56c6c; }
-.spot-recommended { background: #e6a23c; }
+.road {
+  background: #111;
+}
+.route-path { background: #d93025; }
+.spot-free,
+.spot-occupied,
+.spot-recommended {
+  position: relative;
+  background: #eef2f7;
+}
+.spot-free::after,
+.spot-occupied::after,
+.spot-recommended::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 4px;
+  width: 24px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid #ffffff;
+}
+.spot-free::after { background: #67c23a; }
+.spot-occupied::after { background: #f56c6c; }
+.spot-recommended::after {
+  background: #e6a23c;
+  box-shadow: 0 0 0 2px #d93025 inset;
+}
 .element-pillar { background: #606266; }
 .element-elevator { background: #409eff; }
 .element-entrance { background: #909399; }
@@ -146,4 +169,9 @@ html, body, #app {
 
 .mb16 {
   margin-bottom: 16px;
+}
+
+
+.map-xl {
+  max-height: 620px;
 }
