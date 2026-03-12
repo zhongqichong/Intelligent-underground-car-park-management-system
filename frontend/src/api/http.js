@@ -1,17 +1,34 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api'
+const baseURL = import.meta.env.VITE_API_BASE_URL || ''
 
 const http = axios.create({
-  baseURL: apiBaseUrl
+  baseURL,
+  timeout: 15000
 })
 
-export async function request({ method, url, data, token }) {
-  const headers = token ? { Authorization: `Bearer ${token}` } : {}
-  const res = await http({ method, url, data, headers })
-  const payload = res.data
-  if (payload && payload.success === false) {
-    throw new Error(payload.message || 'Request failed')
+http.interceptors.response.use(
+  (response) => {
+    const payload = response.data
+    if (payload && typeof payload.success === 'boolean') {
+      if (!payload.success) {
+        const error = new Error(payload.message || 'Request failed')
+        error.payload = payload
+        throw error
+      }
+      return payload.data
+    }
+    return payload
+  },
+  (error) => {
+    const message = error?.response?.data?.message || error.message || 'Network error'
+    ElMessage.error(message)
+    throw error
   }
-  return payload?.data
+)
+
+export function request({ method = 'get', url, data, params, token }) {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {}
+  return http({ method, url, data, params, headers })
 }

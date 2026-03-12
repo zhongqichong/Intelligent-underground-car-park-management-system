@@ -1,32 +1,48 @@
 <template>
-  <el-container class="layout">
-    <el-header class="top-header">
-      <div class="brand">Underground Garage Intelligent Management</div>
-      <div class="top-right">
-        <el-input v-model="token" placeholder="Paste JWT token" style="width: 320px" clearable />
-      </div>
-    </el-header>
-
-    <el-container>
-      <el-aside width="220px" class="side-menu">
+  <el-config-provider>
+    <el-container class="app-shell">
+      <el-aside width="220px" class="sidebar" v-if="isAuthenticated">
+        <div class="logo">Smart Garage</div>
         <el-menu :default-active="route.path" router>
-          <el-menu-item index="/owner">车主视图</el-menu-item>
-          <el-menu-item index="/admin">管理员看板</el-menu-item>
+          <el-menu-item index="/owner">车主工作台</el-menu-item>
+          <el-menu-item index="/admin" :disabled="!isAdmin">管理员中心</el-menu-item>
         </el-menu>
       </el-aside>
 
-      <el-main>
-        <router-view :token="token" />
-      </el-main>
+      <el-container>
+        <el-header class="header" v-if="isAuthenticated">
+          <el-breadcrumb separator="/">
+            <el-breadcrumb-item>智能地下车库</el-breadcrumb-item>
+            <el-breadcrumb-item>{{ route.path === '/admin' ? '管理员中心' : '车主工作台' }}</el-breadcrumb-item>
+          </el-breadcrumb>
+          <div class="header-right">
+            <el-tag type="success">{{ session.state.role || 'OWNER' }}</el-tag>
+            <span class="username">{{ session.state.username }}</span>
+            <el-button link type="danger" @click="logout">退出登录</el-button>
+          </div>
+        </el-header>
+
+        <el-main class="main-content">
+          <router-view />
+        </el-main>
+      </el-container>
     </el-container>
-  </el-container>
+  </el-config-provider>
 </template>
 
 <script setup>
-import { ref, provide } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useSession } from './composables/useSession'
 
+const session = useSession()
 const route = useRoute()
-const token = ref('')
-provide('tokenRef', token)
+const router = useRouter()
+
+const isAuthenticated = session.isAuthenticated
+const isAdmin = session.isAdmin
+
+function logout() {
+  session.clearSession()
+  router.push('/login')
+}
 </script>

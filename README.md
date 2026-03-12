@@ -80,13 +80,15 @@ Frontend API access:
    - `POST /api/admin/alerts/{alertId}/resolve`
 
 ## Frontend (Vue + Element UI style)
-The frontend is now split into layered modules:
-- `src/App.vue`: overall layout (header + side navigation)
-- `src/router/index.js`: route management (`/owner`, `/admin`)
-- `src/views/OwnerView.vue`: owner map and entry flow
-- `src/views/AdminView.vue`: admin dashboard
-- `src/api/http.js`: API request wrapper for unified response envelope
-- `src/styles/app.css`: global and map styles
+The frontend is now split into layered modules and polished with Element Plus:
+- `src/views/LoginView.vue`: login + owner registration
+- `src/App.vue`: overall layout shell (sidebar, breadcrumb, user info)
+- `src/router/index.js`: route guards for auth/admin-only access
+- `src/views/OwnerView.vue`: owner map, recommendation, entry/exit actions
+- `src/views/AdminView.vue`: admin center (report/spot/map element/alert/log tabs)
+- `src/composables/useSession.js`: token persistence + JWT role parsing
+- `src/api/http.js`: request wrapper with unified envelope + error interception
+- `src/styles/app.css`: full theme styling for a cleaner management UI
 
 ## Thesis material
 - `docs/thesis_ppt_outline.md` provides a defense PPT outline template.
